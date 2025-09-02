@@ -5,6 +5,7 @@ class AIChat {
         this.currentTemperature = 0.7;
         this.useRandomSeed = true;
         this.fixedSeed = null;
+        this.SEED_MAX = 999_999_999_999_999;
         
         this.initializeElements();
         this.loadHistory();
@@ -58,7 +59,7 @@ class AIChat {
 
         this.seedInput.addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
-            if (!isNaN(value) && value >= 0 && value <= 999999999999999) {
+            if (!isNaN(value) && value >= 0 && value <= this.SEED_MAX) {
                 this.fixedSeed = value;
             } else {
                 this.fixedSeed = null;
@@ -108,14 +109,19 @@ class AIChat {
         
         // Генерируем случайный сид или используем фиксированный
         const seed = this.useRandomSeed ? 
-            Math.floor(Math.random() * 999999999999999) : 
-            (this.fixedSeed || Math.floor(Math.random() * 999999999999999));
+            Math.floor(Math.random() * (this.SEED_MAX + 1)) : 
+            (this.fixedSeed || Math.floor(Math.random() * (this.SEED_MAX + 1)));
         
         // Кодируем сообщение для URL
         const encodedMessage = encodeURIComponent(fullMessage);
         
         // Формируем URL с параметрами
-        const url = `https://text.pollinations.ai/${encodedMessage}?model=${this.currentModel}&temperature=${this.currentTemperature}&seed=${seed}`;
+        const params = new URLSearchParams({
+            model: this.currentModel,
+            temperature: String(this.currentTemperature),
+            seed: String(seed)
+        });
+        const url = `https://text.pollinations.ai/${encodedMessage}?${params.toString()}`;
         
         const response = await fetch(url);
         
@@ -128,7 +134,7 @@ class AIChat {
     }
 
     getContextMessages() {
-        // Берем последние 5 сообщений для контекста
+        // Берем последние 10 сообщений для контекста
         const recentMessages = this.messages.slice(-10);
         let context = '';
         
