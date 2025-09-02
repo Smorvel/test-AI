@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Чат - Pollinations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🤖 AI Чат</h1>
+            <div class="settings">
+                <div class="setting-group">
+                    <label for="model-select">Модель:</label>
+                    <select id="model-select">
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="claude-3">Claude-3</option>
+                        <option value="gemini-pro">Gemini Pro</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="temperature-slider">Температура: <span id="temperature-value">0.7</span></label>
+                    <input type="range" id="temperature-slider" min="0" max="2" step="0.1" value="0.7">
+                </div>
+                <button id="clear-history" class="clear-btn">🗑️ Очистить историю</button>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <div id="chat-messages" class="chat-messages">
+                <div class="message system-message">
+                    <div class="message-content">
+                        Добро пожаловать в AI чат! Выберите модель, настройте температуру и начните общение.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea id="message-input" placeholder="Введите ваше сообщение..." rows="1"></textarea>
+                <button id="send-button" class="send-btn">
+                    <span class="send-icon">➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading hidden">
+        <div class="loading-spinner"></div>
+        <span>AI думает...</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
