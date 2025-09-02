@@ -3,6 +3,8 @@ class AIChat {
         this.messages = [];
         this.currentModel = 'gpt-4';
         this.currentTemperature = 0.7;
+        this.useRandomSeed = true;
+        this.fixedSeed = null;
         
         this.initializeElements();
         this.loadHistory();
@@ -17,6 +19,8 @@ class AIChat {
         this.modelSelect = document.getElementById('model-select');
         this.temperatureSlider = document.getElementById('temperature-slider');
         this.temperatureValue = document.getElementById('temperature-value');
+        this.seedToggle = document.getElementById('seed-toggle');
+        this.seedInput = document.getElementById('seed-input');
         this.clearHistoryBtn = document.getElementById('clear-history');
         this.loading = document.getElementById('loading');
     }
@@ -42,6 +46,25 @@ class AIChat {
         });
 
         this.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+
+        this.seedToggle.addEventListener('change', (e) => {
+            this.useRandomSeed = e.target.checked;
+            this.seedInput.disabled = this.useRandomSeed;
+            if (!this.useRandomSeed) {
+                this.seedInput.focus();
+            }
+            this.saveSettings();
+        });
+
+        this.seedInput.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            if (!isNaN(value) && value >= 0 && value <= 999999999999999) {
+                this.fixedSeed = value;
+            } else {
+                this.fixedSeed = null;
+            }
+            this.saveSettings();
+        });
     }
 
     autoResizeTextarea() {
@@ -67,7 +90,7 @@ class AIChat {
         try {
             // Отправляем запрос к API
             const response = await this.callAPI(message);
-            this.addMessage('ai', response);
+            this.addMessage('ai', response.text, response.seed);
         } catch (error) {
             console.error('Ошибка при отправке сообщения:', error);
             this.addMessage('ai', 'Извините, произошла ошибка при обработке вашего запроса. Попробуйте еще раз.');
@@ -83,11 +106,16 @@ class AIChat {
         const context = this.getContextMessages();
         const fullMessage = context + message;
         
+        // Генерируем случайный сид или используем фиксированный
+        const seed = this.useRandomSeed ? 
+            Math.floor(Math.random() * 999999999999999) : 
+            (this.fixedSeed || Math.floor(Math.random() * 999999999999999));
+        
         // Кодируем сообщение для URL
         const encodedMessage = encodeURIComponent(fullMessage);
         
         // Формируем URL с параметрами
-        const url = `https://text.pollinations.ai/${encodedMessage}?model=${this.currentModel}&temperature=${this.currentTemperature}`;
+        const url = `https://text.pollinations.ai/${encodedMessage}?model=${this.currentModel}&temperature=${this.currentTemperature}&seed=${seed}`;
         
         const response = await fetch(url);
         
@@ -96,7 +124,7 @@ class AIChat {
         }
         
         const text = await response.text();
-        return text;
+        return { text, seed };
     }
 
     getContextMessages() {
@@ -119,13 +147,14 @@ class AIChat {
         return context;
     }
 
-    addMessage(type, content) {
+    addMessage(type, content, seed = null) {
         const message = {
             type,
             content,
             timestamp: new Date().toISOString(),
             model: type === 'ai' ? this.currentModel : null,
-            temperature: type === 'ai' ? this.currentTemperature : null
+            temperature: type === 'ai' ? this.currentTemperature : null,
+            seed: type === 'ai' ? seed : null
         };
 
         this.messages.push(message);
@@ -151,7 +180,8 @@ class AIChat {
         });
 
         if (message.type === 'ai') {
-            infoDiv.textContent = `${time} • ${message.model} • T=${message.temperature}`;
+            const seedInfo = message.seed ? ` • Seed=${message.seed}` : '';
+            infoDiv.textContent = `${time} • ${message.model} • T=${message.temperature}${seedInfo}`;
         } else {
             infoDiv.textContent = time;
         }
@@ -232,7 +262,9 @@ class AIChat {
     saveSettings() {
         const settings = {
             model: this.currentModel,
-            temperature: this.currentTemperature
+            temperature: this.currentTemperature,
+            useRandomSeed: this.useRandomSeed,
+            fixedSeed: this.fixedSeed
         };
         
         try {
@@ -257,6 +289,19 @@ class AIChat {
                     this.currentTemperature = settings.temperature;
                     this.temperatureSlider.value = settings.temperature;
                     this.temperatureValue.textContent = settings.temperature;
+                }
+
+                if (settings.useRandomSeed !== undefined) {
+                    this.useRandomSeed = settings.useRandomSeed;
+                    this.seedToggle.checked = settings.useRandomSeed;
+                    this.seedInput.disabled = settings.useRandomSeed;
+                }
+
+                if (settings.fixedSeed !== undefined) {
+                    this.fixedSeed = settings.fixedSeed;
+                    if (settings.fixedSeed !== null) {
+                        this.seedInput.value = settings.fixedSeed;
+                    }
                 }
             }
         } catch (error) {
