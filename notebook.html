@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Блокнот</title>
+    <link rel="stylesheet" href="notebook.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📝 HTML Блокнот</h1>
+            <div class="header-actions">
+                <button id="save-btn" class="action-btn">💾 Сохранить</button>
+                <button id="load-btn" class="action-btn">📂 Загрузить</button>
+                <button id="new-btn" class="action-btn">📄 Новый</button>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <!-- Размер текста -->
+            <div class="toolbar-group">
+                <label for="font-size">Размер:</label>
+                <input type="number" id="font-size" min="8" max="72" value="14" class="size-input">
+                <span>px</span>
+            </div>
+
+            <!-- Основное форматирование -->
+            <div class="toolbar-group">
+                <button id="bold-btn" class="format-btn" title="Жирный (Ctrl+B)">
+                    <strong>B</strong>
+                </button>
+                <button id="italic-btn" class="format-btn" title="Курсив (Ctrl+I)">
+                    <em>I</em>
+                </button>
+                <button id="underline-btn" class="format-btn" title="Подчеркнутый (Ctrl+U)">
+                    <u>U</u>
+                </button>
+                <button id="strikethrough-btn" class="format-btn" title="Зачеркнутый">
+                    <s>S</s>
+                </button>
+            </div>
+
+            <!-- Цвет текста -->
+            <div class="toolbar-group">
+                <div class="color-picker-wrapper">
+                    <button id="text-color-btn" class="color-btn" title="Цвет текста">
+                        <span class="color-icon">A</span>
+                        <div class="color-preview" id="text-color-preview"></div>
+                    </button>
+                    <div class="color-palette" id="text-color-palette">
+                        <div class="color-option" data-color="#000000" style="background: #000000;"></div>
+                        <div class="color-option" data-color="#FF0000" style="background: #FF0000;"></div>
+                        <div class="color-option" data-color="#00FF00" style="background: #00FF00;"></div>
+                        <div class="color-option" data-color="#0000FF" style="background: #0000FF;"></div>
+                        <div class="color-option" data-color="#FFFF00" style="background: #FFFF00;"></div>
+                        <div class="color-option" data-color="#FF00FF" style="background: #FF00FF;"></div>
+                        <div class="color-option" data-color="#00FFFF" style="background: #00FFFF;"></div>
+                        <div class="color-option" data-color="#800000" style="background: #800000;"></div>
+                        <div class="color-option" data-color="#008000" style="background: #008000;"></div>
+                        <div class="color-option" data-color="#000080" style="background: #000080;"></div>
+                        <div class="color-option" data-color="#808080" style="background: #808080;"></div>
+                        <div class="color-option" data-color="#C0C0C0" style="background: #C0C0C0;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Маркер -->
+            <div class="toolbar-group">
+                <div class="color-picker-wrapper">
+                    <button id="highlight-btn" class="color-btn" title="Маркер">
+                        <span class="highlight-icon">🖍️</span>
+                        <div class="color-preview" id="highlight-color-preview"></div>
+                    </button>
+                    <div class="color-palette" id="highlight-color-palette">
+                        <div class="color-option" data-color="transparent" style="background: white; border: 1px solid #ccc;" title="Убрать выделение">×</div>
+                        <div class="color-option" data-color="#FFFF00" style="background: #FFFF00;" title="Желтый"></div>
+                        <div class="color-option" data-color="#00FF00" style="background: #00FF00;" title="Зеленый"></div>
+                        <div class="color-option" data-color="#00FFFF" style="background: #00FFFF;" title="Голубой"></div>
+                        <div class="color-option" data-color="#FF69B4" style="background: #FF69B4;" title="Розовый"></div>
+                        <div class="color-option" data-color="#FFA500" style="background: #FFA500;" title="Оранжевый"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ссылки и медиа -->
+            <div class="toolbar-group">
+                <button id="link-btn" class="format-btn" title="Вставить ссылку">
+                    🔗
+                </button>
+                <button id="image-btn" class="format-btn" title="Вставить изображение">
+                    🖼️
+                </button>
+                <button id="table-btn" class="format-btn" title="Вставить таблицу">
+                    📊
+                </button>
+            </div>
+
+            <!-- Списки -->
+            <div class="toolbar-group">
+                <button id="bullet-list-btn" class="format-btn" title="Маркированный список">
+                    • Список
+                </button>
+                <button id="number-list-btn" class="format-btn" title="Нумерованный список">
+                    1. Список
+                </button>
+                <button id="check-list-btn" class="format-btn" title="Список с галочками">
+                    ✓ Список
+                </button>
+            </div>
+
+            <!-- Позиционирование -->
+            <div class="toolbar-group">
+                <div class="dropdown-wrapper">
+                    <button id="align-btn" class="format-btn dropdown-btn" title="Выравнивание">
+                        ⬅️ Позиция
+                    </button>
+                    <div class="dropdown-menu" id="align-menu">
+                        <button class="dropdown-item" data-align="left">⬅️ По левому краю</button>
+                        <button class="dropdown-item" data-align="center">↔️ По центру</button>
+                        <button class="dropdown-item" data-align="right">➡️ По правому краю</button>
+                        <button class="dropdown-item" data-align="justify">↕️ По ширине</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Очистка форматирования -->
+            <div class="toolbar-group">
+                <button id="clear-format-btn" class="format-btn" title="Очистить форматирование">
+                    🧹 Очистить
+                </button>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <div id="editor" class="editor" contenteditable="true" spellcheck="false">
+                <p>Начните печатать здесь...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    
+    <!-- Модальное окно для ссылки -->
+    <div id="link-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Вставить ссылку</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="link-text">Текст ссылки:</label>
+                    <input type="text" id="link-text" placeholder="Введите текст ссылки">
+                </div>
+                <div class="form-group">
+                    <label for="link-url">URL:</label>
+                    <input type="url" id="link-url" placeholder="https://example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="link-cancel" class="btn btn-secondary">Отмена</button>
+                <button id="link-ok" class="btn btn-primary">Вставить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для изображения -->
+    <div id="image-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Вставить изображение</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="image-url">URL изображения:</label>
+                    <input type="url" id="image-url" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="image-alt">Альтернативный текст:</label>
+                    <input type="text" id="image-alt" placeholder="Описание изображения">
+                </div>
+                <div class="form-group">
+                    <label for="image-width">Ширина (px):</label>
+                    <input type="number" id="image-width" placeholder="300" min="50" max="1000">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="image-cancel" class="btn btn-secondary">Отмена</button>
+                <button id="image-ok" class="btn btn-primary">Вставить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для таблицы -->
+    <div id="table-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Вставить таблицу</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="table-rows">Количество строк:</label>
+                    <input type="number" id="table-rows" value="3" min="1" max="20">
+                </div>
+                <div class="form-group">
+                    <label for="table-cols">Количество столбцов:</label>
+                    <input type="number" id="table-cols" value="3" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="table-header" checked>
+                        Первая строка - заголовок
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="table-cancel" class="btn btn-secondary">Отмена</button>
+                <button id="table-ok" class="btn btn-primary">Вставить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрытый input для загрузки файлов -->
+    <input type="file" id="file-input" accept=".html,.txt" style="display: none;">
+
+    <script src="notebook.js"></script>
+</body>
+</html>
